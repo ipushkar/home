@@ -1,0 +1,156 @@
+echo OFF 
+clear
+while true
+do
+echo -e "\033[0;32m********************MENU***********************\033[0m"
+echo ...............................................
+echo -e "\033[0;32m    PRESS\033[0m 1-9 \033[0;32mto select task or\033[0m q \033[0;32mto exit   \033[0m"
+echo ...............................................
+echo -e "\033[0;32m***********************************************\033[0m"
+echo -e "\033[0;32m****\033[0mBEFORE_INSTALLING_DOWNLOAD_WGET_&_MYSQL\033[0;32m****\033[0m"
+echo -e "1-Install Java \033[0;31m[Reboot needed]\033[0m"
+echo 2-Install Tomcat 
+echo -e "3-Install MAVEN \033[0;31m[Reboot needed]\033[0m"
+echo 4-Install Project
+echo 5-Create lv155 user and empty oms database
+echo 6-Update oms database
+echo 7-Restart Tomcat and iptables
+echo 8-Install wget and MySql
+echo 9-Reboot the system
+echo q-Exit
+read answer 
+case "$answer" in
+ 1) java -version &> /dev/null    
+    if [ $? -eq 0 ] 
+    then 
+        echo -e "\033[0;31mJava allready installed\033[0m"
+    else 
+	echo -e "\033[0;32m1.Downloading Java\033[0m"
+    	cd /opt/ 
+    	wget --no-cookies --no-check-certificate --header "Cookie:gpw_e24=http3%A%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-x64.tar.gz"
+    	if [ -e jdk-8u60-linux-x64.tar.gz ]
+      	then 
+            echo -e "\033[0;32mDownloading completed\033[0m"
+            echo -e "\033[0;32m2.Unpacking downloaded file\033[0m"
+            tar xzf jdk-8u60-linux-x64.tar.gz
+            if [ -d jdk1.8.0_60 ]
+            then 
+                echo -e "\033[0;32mUnpacking completed\033[0m" 
+                echo -e "\033[0;32m3.Installing Java\033[0m"
+                cd jdk1.8.0_60
+                alternatives --install /usr/bin/java java /opt/jdk1.8_60/bin/java 2
+                alternatives --install /usr/bin/jar jar /opt/jdk1.8_60/bin/jar 2
+                alternatives --install /usr/bin/javac javac /opt/jdk1.8_60/bin/javac 2
+                alternatives --set jar /opt/jdk1.8_60/bin/jar
+                alternatives --set javac /opt/jdk1.8_60/bin/javac
+        
+                echo "JAVA_HOME=/opt/jdk1.8.0_60/">>/etc/profile
+                echo "PATH=/opt/jdk1.8.0_60/bin:$PATH">>/etc/profile
+                echo -e "\033[0;32mInstallation completed\033[0m"
+                echo -e "Please\033[0;31m reboot\033[0m the system to complete the installation process"
+            else 
+                echo -e "\033[0;31mUnpacking failed! Try again\033[0m"
+            fi 
+         else
+        echo -e "\033[0;31mDownloading failed ! Try again\033[0m"
+        fi
+    fi;;
+ 2) cd /usr/local
+    if [ -d tomcat7 ]
+    then 
+        echo -e "\033[0;31mTomcat installed allready\033[0m"
+    else
+	echo -e "\033[0;32m1.Downloading Tomcat\033[0m"
+    	cd /opt/
+    	wget http://www.us.apache.org/dist/tomcat/tomcat-7/v7.0.64/bin/apache-tomcat-7.0.64.tar.gz
+    	if [ -e apache-tomcat-7.0.64.tar.gz ]
+    	then 
+            echo -e "\033[0;32mDownloading completed\033[0m"
+            echo -e "\033[0;32m2.Unpacking downloaded file\033[0m"
+            tar xzf apache-tomcat-7.0.64.tar.gz
+            if [ -d apache-tomcat-7.0.64 ]
+            then 
+                echo -e "\033[0;32mUnpacking completed\033[0m"
+                mv apache-tomcat-7.0.64 /usr/local/tomcat7
+                cd /usr/local/tomcat7
+                ./bin/startup.sh
+             else 
+                 echo -e "\033[0;31mUnpacking failed! Try again\033[0m"
+            fi
+        else
+            echo -e "\033[0;31mDownloading failed! Try again\033[0m" 
+        fi
+    fi;;     
+ 3) mvn -version &> /dev/null
+    if [ $? == 0 ]
+    then 
+        echo -e "\033[0;31mMaven allready installed\033[0m"
+    else
+    	echo -e "\033[0;32m1.Downloading MAVEN\033[0m"
+    	cd /opt/
+    	wget http://apache.volia.net/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz
+    	if [ -e apache-maven-3.3.3-bin.tar.gz ]
+    	then
+            echo -e "\033[0;32mDownloading completed\033[0m"
+            echo -e "\033[0;32m2.Unpacking downloaded file\033[0m"
+            tar xzf apache-maven-3.3.3-bin.tar.gz
+            if [ -d apache-maven-3.3.3 ]
+            then 
+                echo -e "\033[0;32mUnpacking completed\033[0m"
+                echo -e "\033[0;32m3.Installing MAVEN\033[0m"
+                cd /opt
+                mv apache-maven-3.3.3 /usr/local/maven
+                echo "M2_HOME=/usr/local/maven">>/etc/profile.d/maven.sh
+                echo "M2=/usr/local/maven/bin">>/etc/profile.d/maven.sh
+                echo "PATH=/usr/local/maven/bin:$PATH">>/etc/profile
+                echo -e "\033[0;32mInstallation completed\033[0m"
+                echo -e "Please \033[0;31mreboot\033[0m the system to complete the installation process"
+            else
+                echo -e"\033[0;31mUnpacking failed! Try again\033[0m"
+            fi
+        else
+            echo -e "\033[0;31mDownloading failed! Try again\033[0m"
+        fi
+    fi;;
+ 4) echo -e "\033[0;32mInstalling application\033[0m"
+    cd /home/
+    yum -y install unzip
+    unzip oms5.zip
+    if [ -d oms5 ]
+      then 
+          echo -e "\033[0;32mUnpacking was successfull\033[0m"
+          cd /home/oms5
+          echo -e "\033[0;32mStarting mvn installation\033[0m"
+          mvn install
+          cp /home/oms5/target/OMS.war /usr/local/tomcat7/webapps
+          cd /usr/local/tomcat7/webapps
+          if [ -e OMS.war ]
+            then 
+                echo -e "\033[0;32mApplication successfully installed\033[0m"
+            else
+                echo -e "\033[0;32mError while trying to install application\033[0m"
+            fi
+      else
+          echo -e "\033[0;31mUnpacking failed! Try again\033[0m"
+    fi;;
+ 5) echo -e "\033[0;32mCreating new user\033[0m"
+    mysql -u root -p -e "create user lv155@localhost identified by 'lv155'; grant all privileges on *.* to lv155@localhost; flush privileges"
+    echo -e "\033[0;32mCreating empty database oms\033[0m"
+    mysql -u lv155 -plv155 -e "create database oms"
+    cd /usr/local/tomcat7
+    ./bin/startup.sh;;
+ 6) mysql -u lv155 -plv155 oms</home/oms5/scripts/addDataMySql.sql
+    echo -e "\033[0;32mTables updated successfully\033[0m";;
+ 7) echo -e "\033[0;32mRestarting Tomcat and iptables\033[0m"
+    cd /usr/local/tomcat7
+    ./bin/startup.sh
+    service iptables restart;;
+ 8) yum -y install wget
+    yum -y install mariadb-server
+    chkconfig mariadb on
+    service mariadb start
+    service iptables start;;
+ 9) reboot;;
+ q) exit;;
+esac
+done
