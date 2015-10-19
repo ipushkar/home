@@ -1,0 +1,10 @@
+*** Settings ***
+Library        String
+
+*** Variables ***
+${PASSWORD}        SAMPLE_PASSWORD
+
+*** Keywords ***
+Sample Common Func
+    #Sleep           1s
+    Log              Call Sample Common Func     	WARN        
