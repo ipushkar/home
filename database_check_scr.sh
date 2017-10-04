@@ -10,4 +10,5 @@ if [ $? == 0 ]
   else 
       echo -e "\033[0;31mSomething went wrong. Please try again\033[0;31m"
       echo -e "\033[0;31mTest failed\033[0m"
+      echo "success"
 fi
