@@ -1,5 +1,6 @@
 #!/bin/bash
-user=$1
+# checking database
+user=$1 
 pass=$2
 base=$3
 mysql -u $user -p$pass -e "use $base; show tables ; describe friends; select * from friends"
