@@ -1,4 +1,5 @@
 #!/bin/bash
+# Folder move
 path=$1
 folder=$2
 newpath=$3
